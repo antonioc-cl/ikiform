@@ -1,0 +1,151 @@
+{
+  "title": "ACERA Compliance Form",
+  "description": "Complete regulatory compliance form for ACERA requirements",
+  "fields": [
+    {
+      "id": "section_1",
+      "type": "section",
+      "label": "Personal Information",
+      "description": "Please provide your basic personal information"
+    },
+    {
+      "id": "first_name",
+      "type": "short_text",
+      "label": "First Name",
+      "required": true,
+      "validation": {
+        "min_length": 2,
+        "max_length": 50
+      }
+    },
+    {
+      "id": "last_name", 
+      "type": "short_text",
+      "label": "Last Name",
+      "required": true,
+      "validation": {
+        "min_length": 2,
+        "max_length": 50
+      }
+    },
+    {
+      "id": "email",
+      "type": "email",
+      "label": "Email Address",
+      "required": true,
+      "validation": {
+        "format": "email"
+      }
+    },
+    {
+      "id": "employment_status",
+      "type": "radio",
+      "label": "Employment Status",
+      "required": true,
+      "options": [
+        "Full-time Employee",
+        "Part-time Employee", 
+        "Contractor",
+        "Consultant",
+        "Retired",
+        "Other"
+      ]
+    },
+    {
+      "id": "section_2",
+      "type": "section",
+      "label": "Compliance Requirements",
+      "description": "Regulatory compliance information"
+    },
+    {
+      "id": "compliance_areas",
+      "type": "checkboxes",
+      "label": "Select applicable compliance areas",
+      "required": true,
+      "validation": {
+        "min_selections": 1,
+        "max_selections": 10
+      },
+      "options": [
+        "Financial Reporting",
+        "Data Privacy (GDPR/CCPA)",
+        "Security Standards (SOC 2)",
+        "Healthcare (HIPAA)",
+        "Environmental (EPA)",
+        "Employment Law",
+        "Tax Compliance",
+        "International Trade",
+        "Anti-Money Laundering",
+        "Other Regulatory Requirements"
+      ]
+    },
+    {
+      "id": "risk_level",
+      "type": "multi_select",
+      "label": "Risk Assessment Levels",
+      "required": true,
+      "validation": {
+        "min_selections": 1,
+        "max_selections": 3
+      },
+      "options": [
+        "Low Risk",
+        "Medium Risk", 
+        "High Risk",
+        "Critical Risk"
+      ]
+    },
+    {
+      "id": "section_3",
+      "type": "section",
+      "label": "Financial Information",
+      "description": "Financial data and metrics"
+    },
+    {
+      "id": "annual_revenue",
+      "type": "number",
+      "label": "Annual Revenue (USD)",
+      "required": true,
+      "validation": {
+        "min": 0,
+        "max": 1000000000
+      }
+    },
+    {
+      "id": "budget_allocation",
+      "type": "number",
+      "label": "Compliance Budget Allocation (%)",
+      "required": true,
+      "validation": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    {
+      "id": "section_4",
+      "type": "section", 
+      "label": "Additional Information",
+      "description": "Supplementary details and comments"
+    },
+    {
+      "id": "additional_comments",
+      "type": "long_text",
+      "label": "Additional Comments or Concerns",
+      "required": false,
+      "validation": {
+        "max_length": 2000
+      }
+    }
+  ],
+  "settings": {
+    "theme": "professional",
+    "submission": {
+      "redirectUrl": "https://example.com/success",
+      "successMessage": "Thank you for completing the ACERA compliance form. Your submission has been received and will be reviewed within 2 business days."
+    },
+    "notifications": {
+      "sendEmail": true,
+      "emails": ["compliance@company.com", "legal@company.com"]
+    }
+  }
+}

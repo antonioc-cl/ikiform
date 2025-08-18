@@ -1,5 +1,5 @@
-import type { FormLogic } from "@/components/form-builder/logic-builder/types";
-import type { FormBlock, FormField, FormSchema } from "@/lib/database";
+import type { FormLogic } from '@/components/form-builder/logic-builder/types';
+import type { FormBlock, FormField, FormSchema } from '@/lib/database';
 
 export interface FormBuilderProps {
   formId?: string;
@@ -19,6 +19,7 @@ export interface FormBuilderState {
   showJsonView: boolean;
   showCreationWizard: boolean;
   showShareModal: boolean;
+  showImportModal: boolean;
   isNewForm: boolean;
   formSchema: FormSchema;
   formSlug: string | null;
@@ -38,10 +39,11 @@ export interface FormBuilderActions {
   setShowJsonView: (show: boolean) => void;
   setShowCreationWizard: (show: boolean) => void;
   setShowShareModal: (show: boolean) => void;
+  setShowImportModal: (show: boolean) => void;
   setIsNewForm: (isNew: boolean) => void;
   setFormSlug: (slug: string | null) => void;
   setFormSchema: (
-    schema: FormSchema | ((prev: FormSchema) => FormSchema),
+    schema: FormSchema | ((prev: FormSchema) => FormSchema)
   ) => void;
 }
 
@@ -59,6 +61,7 @@ export interface FormBuilderHeaderProps {
   onSettings: () => void;
   onPublish: () => void;
   onSave: () => void;
+  onImportFromJson?: () => void;
 }
 
 export interface UnsavedChangesIndicatorProps {
@@ -71,7 +74,7 @@ export interface FormBuilderPanelsProps {
   selectedFieldId: string | null;
   selectedBlockId: string | null;
   selectedField: FormField | null;
-  onFieldAdd: (fieldType: FormField["type"]) => void;
+  onFieldAdd: (fieldType: FormField['type']) => void;
   onFieldSelect: (fieldId: string | null) => void;
   onFieldUpdate: (field: FormField) => void;
   onFieldDelete: (fieldId: string) => void;
@@ -81,7 +84,7 @@ export interface FormBuilderPanelsProps {
   onBlockAdd: () => void;
   onBlockUpdate: (blockId: string, updates: Partial<FormBlock>) => void;
   onBlockDelete: (blockId: string) => void;
-  onFormSettingsUpdate: (settings: Partial<FormSchema["settings"]>) => void;
+  onFormSettingsUpdate: (settings: Partial<FormSchema['settings']>) => void;
   onStepSelect: (stepIndex: number) => void;
   onLogicChange?: (logic: FormLogic) => void;
 }
@@ -92,6 +95,7 @@ export interface FormBuilderModalsProps {
   showJsonView: boolean;
   showCreationWizard: boolean;
   showShareModal: boolean;
+  showImportModal: boolean;
   formSchema: FormSchema;
   formId?: string;
   formSlug?: string | null;
@@ -101,9 +105,11 @@ export interface FormBuilderModalsProps {
   onCloseJsonView: () => void;
   onCloseCreationWizard: () => void;
   onCloseShareModal: () => void;
+  onCloseImportModal: () => void;
   onFormTypeSelect: (schema: FormSchema) => void;
-  onFormSettingsUpdate: (settings: Partial<FormSchema["settings"]>) => void;
+  onFormSettingsUpdate: (settings: Partial<FormSchema['settings']>) => void;
   onSchemaUpdate: (updates: Partial<FormSchema>) => void;
   onPublish: () => Promise<void>;
+  onImportSuccess: (schema: FormSchema) => void;
   userEmail?: string;
 }
