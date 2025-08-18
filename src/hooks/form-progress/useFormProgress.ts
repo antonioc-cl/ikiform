@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { FormProgressStorage } from "../../lib/form-progress/storage";
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import { FormProgressStorage } from '../../lib/form-progress/storage';
 import type {
   FormProgress,
   FormProgressActions,
   FormProgressConfig,
   FormProgressState,
   SaveProgressOptions,
-} from "../../lib/form-progress/types";
+} from '../../lib/form-progress/types';
 
 const DEFAULT_CONFIG: FormProgressConfig = {
   enabled: true,
-  storage: "localStorage",
+  storage: 'localStorage',
   autoSaveInterval: 1000,
   retentionDays: 7,
   compressionEnabled: false,
@@ -28,7 +28,7 @@ export function useFormProgress(
   formId: string,
   totalFields: number,
   config: Partial<FormProgressConfig> = {},
-  options: Partial<SaveProgressOptions> = {},
+  options: Partial<SaveProgressOptions> = {}
 ): FormProgressState & FormProgressActions {
   const [state, setState] = useState<FormProgressState>({
     progress: null,
@@ -37,8 +37,17 @@ export function useFormProgress(
     error: null,
   });
 
-  const finalConfig = { ...DEFAULT_CONFIG, ...config };
-  const finalOptions = { ...DEFAULT_SAVE_OPTIONS, ...options };
+  // Use useMemo to prevent recreating these objects on every render
+  const finalConfig = useMemo(
+    () => ({ ...DEFAULT_CONFIG, ...config }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+  const finalOptions = useMemo(
+    () => ({ ...DEFAULT_SAVE_OPTIONS, ...options }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const storageRef = useRef<FormProgressStorage | null>(null);
   const sessionIdRef = useRef<string | null>(null);
@@ -51,7 +60,7 @@ export function useFormProgress(
       // Try to get existing session ID from localStorage first
       const existingSessionKey = `ikiform_session_${formId}`;
       const existingSessionId = localStorage.getItem(existingSessionKey);
-      
+
       if (existingSessionId) {
         sessionIdRef.current = existingSessionId;
       } else {
@@ -77,7 +86,7 @@ export function useFormProgress(
         }, finalOptions.debounceMs);
       });
     },
-    [finalOptions.debounceMs, finalOptions.enableAutoSave],
+    [finalOptions.debounceMs, finalOptions.enableAutoSave]
   );
 
   const saveProgress = useCallback(
@@ -102,7 +111,7 @@ export function useFormProgress(
           sessionIdRef.current,
           filteredFormData,
           currentStep,
-          totalSteps,
+          totalSteps
         );
 
         await storageRef.current.saveProgress(progress);
@@ -118,15 +127,15 @@ export function useFormProgress(
           ...prev,
           saving: false,
           error:
-            error instanceof Error ? error.message : "Failed to save progress",
+            error instanceof Error ? error.message : 'Failed to save progress',
         }));
       }
     },
-    [formId, finalConfig.enabled, finalOptions.skipFields],
+    [formId, finalConfig.enabled, finalOptions.skipFields]
   );
 
   const loadProgress = useCallback(async () => {
-    if (!(storageRef.current && sessionIdRef.current && finalConfig.enabled)) {
+    if (!(storageRef.current && sessionIdRef.current)) {
       return;
     }
 
@@ -139,7 +148,7 @@ export function useFormProgress(
 
       const progress = await storageRef.current.loadProgress(
         formId,
-        sessionIdRef.current,
+        sessionIdRef.current
       );
 
       setState((prev: FormProgressState) => ({
@@ -153,17 +162,17 @@ export function useFormProgress(
         ...prev,
         loading: false,
         error:
-          error instanceof Error ? error.message : "Failed to load progress",
+          error instanceof Error ? error.message : 'Failed to load progress',
       }));
     }
-  }, [formId, finalConfig.enabled]);
+  }, [formId]);
 
   const clearProgress = useCallback(async () => {
     if (!(storageRef.current && sessionIdRef.current)) return;
 
     try {
       await storageRef.current.deleteProgress(formId, sessionIdRef.current);
-      
+
       // Also clear the session ID from localStorage
       const existingSessionKey = `ikiform_session_${formId}`;
       localStorage.removeItem(existingSessionKey);
@@ -177,16 +186,30 @@ export function useFormProgress(
       setState((prev: FormProgressState) => ({
         ...prev,
         error:
-          error instanceof Error ? error.message : "Failed to clear progress",
+          error instanceof Error ? error.message : 'Failed to clear progress',
       }));
     }
   }, [formId]);
 
   const restoreProgress = useCallback(() => {}, []);
 
+  // Use refs to track if we've already loaded progress for this formId
+  const hasLoadedProgressRef = useRef(false);
+  const lastFormIdRef = useRef<string | null>(null);
+
   useEffect(() => {
-    loadProgress();
-  }, [loadProgress]);
+    // Reset loading flag when formId changes
+    if (formId !== lastFormIdRef.current) {
+      lastFormIdRef.current = formId;
+      hasLoadedProgressRef.current = false;
+    }
+
+    // Only load progress once per formId when enabled
+    if (finalConfig.enabled && formId && !hasLoadedProgressRef.current) {
+      hasLoadedProgressRef.current = true;
+      loadProgress();
+    }
+  }, [formId, loadProgress]);
 
   useEffect(() => {
     if (finalConfig.autoSaveInterval > 0 && state.progress) {
@@ -195,7 +218,7 @@ export function useFormProgress(
           saveProgress(
             state.progress.formData,
             state.progress.currentStep,
-            state.progress.totalSteps,
+            state.progress.totalSteps
           );
         }
       }, finalConfig.autoSaveInterval);
